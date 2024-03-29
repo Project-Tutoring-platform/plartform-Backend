@@ -10,6 +10,7 @@ function returnEmptyObjectOrWhereCondition (keyword, isTeacher) {
   if (keyword) {
     // eslint-disable-next-line no-const-assign
     whereCondition.name = { [condition.like]: `%${keyword}%` }
+    whereCondition.isTeacher = true
   }
   if (isTeacher) {
     whereCondition.isTeacher = isTeacher
@@ -30,7 +31,7 @@ async function withConditionUserFindAll(request) {
     offset: offset || indexFirstPosition,
     order: order ? [[order, sequence || 'ASC']] : [],
     where: returnEmptyObjectOrWhereCondition(searchKeyWord, isTeacher),
-    include: isTeacher ? Teacher : []
+    include: isTeacher || searchKeyWord ? Teacher : []
   })
 }
 
@@ -91,16 +92,6 @@ const userService = {
         })
       }).then(data => data)
       .catch(err => { throw err })
-  },
-  getJWTByPass: req => {
-    const userData = req.user
-    checkErrorMistakeThrow.isExist(userData, 'user is not exist')
-    try {
-      const token = jwt.sign({ id: userData.id }, process.env.JWT_SECRET, { expiresIn: '7d' })
-      return { token, userData }
-    } catch (error) {
-      return error
-    }
   }
 }
 module.exports = userService

@@ -26,6 +26,8 @@ services:
     # networks:
     #   - proxy
     build: 
+    env_file:
+      - .env
     environment:
       NODE_ENV: production
     ports:

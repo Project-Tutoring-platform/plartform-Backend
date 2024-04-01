@@ -16,7 +16,4 @@ USER node
 COPY . /app
 EXPOSE 3000
 
-RUN npm run migrate
-RUN npm run seed
-
-CMD ["node", "app.js"]
+CMD npm run start

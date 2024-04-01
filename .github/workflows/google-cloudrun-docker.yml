@@ -49,9 +49,9 @@ on:
     branches: [ "main" ]
 
 env:
-  PROJECT_ID: iconic-montitor-418400 # TODO: update Google Cloud project id
+  PROJECT_ID: iconic-monitor-418400 # TODO: update Google Cloud project id
   GAR_LOCATION: asia-east1 # TODO: update Artifact Registry location
-  SERVICE: plartform-backend # TODO: update Cloud Run service name
+  SERVICE: platform-backend # TODO: update Cloud Run service name
   REGION: asia-east1 # TODO: update Cloud Run service region
 
 jobs:

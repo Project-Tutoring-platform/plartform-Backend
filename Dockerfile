@@ -16,5 +16,5 @@ USER node
 COPY . /app
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD npm run start
 ENTRYPOINT [ "node","app.js" ]

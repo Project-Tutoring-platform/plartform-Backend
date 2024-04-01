@@ -1,9 +1,9 @@
 module.exports = {
   production: {
-    username: 'root',
+    username: process.env.GOOGLE_CLOUD_SQL_DB_USERNAME,
     password: process.env.GOOGLE_CLOUD_SQL_DB_SECRET,
-    host: '104.199.227.229',
-    database: 'platform-DB',
+    host: process.env.GOOGLE_CLOUD_SQL_DB_HOST,
+    database: process.env.GOOGLE_CLOUD_SQL_DB_DATABASE,
     dialect: 'mysql'
   },
   development: {

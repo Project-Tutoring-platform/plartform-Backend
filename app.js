@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 app.use(router)
 
 app.listen(3000, () => {
-  console.log('express server running on http://localhost:3000')
+  console.log('express server running on http://platform-backend-dev.ap-northeast-1.elasticbeanstalk.com')
 })
 
 module.exports = app

@@ -13,7 +13,7 @@ module.exports = {
       teaching_style: {
         type: Sequelize.TEXT
       },
-      review: {
+      point_total: {
         type: Sequelize.INTEGER
       },
       review_times: {

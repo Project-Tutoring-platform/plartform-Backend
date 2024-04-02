@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Teacher.init({
     teachingStyle: DataTypes.TEXT,
-    review: DataTypes.INTEGER,
+    pointTotal: DataTypes.INTEGER,
     reviewTimes: DataTypes.INTEGER,
     userId: DataTypes.INTEGER,
     courseLink: DataTypes.STRING

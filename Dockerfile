@@ -19,4 +19,4 @@ USER node
 COPY . /app
 EXPOSE 3000
 
-CMD ["sh", "-c", "./cloud_sql_proxy $CLOUD_SQL_CONNECTION_NAME & npm run start && node app.js"]
+CMD ["sh", "-c", "./cloud_sql_proxy $CLOUD_SQL_CONNECTION_NAME & npm run start & node app.js"]

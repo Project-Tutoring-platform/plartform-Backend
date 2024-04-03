@@ -1,6 +1,6 @@
 'use strict'
 const faker = require('faker')
-const { User } = require('./models')
+const { User } = require('../models')
 
 const Teachers = User.findAll({ where: { isTeacher: true }, raw: true })
 

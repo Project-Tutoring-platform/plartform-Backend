@@ -3,6 +3,7 @@ const router = express.Router()
 const signController = require('../controllers/sign-controller')
 const passport = require('../config/passport')
 const { authenticated, adminAuthenticated } = require('../middleware/auth')
+const AppError = require('../helpers/appError')
 
 const { errorHandle } = require('../middleware/error-handler')
 const admin = require('./modules/admin')
@@ -16,8 +17,9 @@ router.post('/signin', signController.postSignin)
 router.get('/signin/google', passport.authenticate('google', { scope: ['email', 'profile'] }))
 router.get('/oauth/boogle/callback', signController.passGoogleOauth)
 
-router.use('/', (req, res) => {
-  res.status(404).json({ status: 'error', message: '404 Not Found' })
+router.all('*', (req, res, next) => {
+  const appErr = new AppError(`Can't find ${req.originalUrl}`, 404)
+  next(appErr)
 })
 router.use(errorHandle)
 

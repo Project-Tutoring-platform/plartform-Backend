@@ -9,7 +9,7 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     await console.log(Teachers)
     await queryInterface.bulkInsert('Teachers',
-      Array.from(await Teachers, (teacher) => ({
+      Array.from(await Teachers, teacher => ({
         teaching_style: faker.lorem.text(),
         course_link: faker.internet.url(),
         user_id: teacher.id,

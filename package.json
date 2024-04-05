@@ -11,7 +11,7 @@
     "migrate": "npx sequelize db:migrate",
     "migrateUndoAll": "npx sequelize db:migrate:undo:all",
     "seed": "npx sequelize db:seed:all",
-    "circle": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all "
+    "start": "npx sequelize db:migrate && npx sequelize db:seed:all "
   },
   "keywords": [],
   "author": "",
@@ -20,8 +20,6 @@
     "lint"
   ],
   "dependencies": {
-    "@google-cloud/cloud-sql-connector": "^1.2.4",
-    "@sequelize/core": "^7.0.0-alpha.37",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "dotenv": "^16.4.5",
@@ -38,7 +36,9 @@
     "request": "^2.88.2",
     "sequelize": "^6.37.1",
     "sequelize-cli": "^6.6.2",
-    "sinon": "^17.0.1"
+    "sinon": "^17.0.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "eslint": "^8.57.0",

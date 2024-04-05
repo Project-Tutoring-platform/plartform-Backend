@@ -1,22 +1,24 @@
 const express = require('express')
-const passport = require('../config/passport')
 const router = express.Router()
-const userController = require('../controllers/user-controller')
-const { authenticated } = require('../middleware/auth')
+const signController = require('../controllers/sign-controller')
+const passport = require('../config/passport')
+const { authenticated, adminAuthenticated } = require('../middleware/auth')
 
 const { errorHandle } = require('../middleware/error-handler')
+const admin = require('./modules/admin')
+const users = require('./modules/users')
 
-router.post('/signup', userController.postSignUp)
-router.post('/signin', userController.postSignin)
+router.use('/admin', authenticated, adminAuthenticated, admin)
+router.use('/users', authenticated, users)
+
+router.post('/signup', signController.postSignUp)
+router.post('/signin', signController.postSignin)
 router.get('/signin/google', passport.authenticate('google', { scope: ['email', 'profile'] }))
-router.get('/oauth/boogle/callback', userController.passGoogleOauth)
-
-router.get('/users', authenticated, userController.getUsers)
-router.put('/users/isTeacher', authenticated, userController.putIsTeacher)
+router.get('/oauth/boogle/callback', signController.passGoogleOauth)
 
 router.use('/', (req, res) => {
   res.status(404).json({ status: 'error', message: '404 Not Found' })
 })
-router.use('/', errorHandle)
+router.use(errorHandle)
 
 module.exports = router

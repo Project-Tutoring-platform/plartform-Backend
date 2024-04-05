@@ -5,7 +5,8 @@ const checkErrorMistakeThrow = require('../helpers/checkError')
 const { Sequelize } = require('sequelize')
 const condition = Sequelize.Op
 
-function returnEmptyObjectOrWhereCondition (keyword, isTeacher) {
+// eslint-disable-next-line space-before-function-paren
+function returnEmptyObjectOrWhereCondition(keyword, isTeacher) {
   const whereCondition = {}
   if (keyword) {
     // eslint-disable-next-line no-const-assign
@@ -21,24 +22,36 @@ function returnEmptyObjectOrWhereCondition (keyword, isTeacher) {
 // eslint-disable-next-line space-before-function-paren
 async function withConditionUserFindAll(request) {
   if (!request) throw new Error(' request lost')
-  const DataMaxAmount = 50
+  const DataMaxAmount = User.count({ where: { isTeacher: true } })
   const dataNormalAmount = 10
   const indexFirstPosition = 0
   const { offset, limit, order, sequence, isTeacher, searchKeyWord } = request.query
-  return User.findAll({
+  return User.findAndCountAll({
     attributes: { exclude: ['password'] },
     limit: limit ? Number(limit) < DataMaxAmount ? Number(limit) : DataMaxAmount : dataNormalAmount,
     offset: offset || indexFirstPosition,
     order: order ? [[order, sequence || 'ASC']] : [],
     where: returnEmptyObjectOrWhereCondition(searchKeyWord, isTeacher),
-    include: isTeacher || searchKeyWord ? Teacher : []
+    include: isTeacher || searchKeyWord ? Teacher : [],
+    nest: true,
+    raw: true
   })
+}
+
+function jwtSignMessageObject (user) {
+  let returnObject = {}
+  if (user.isAdmin) {
+    returnObject = { id: user.id, isAdmin: user.isAdmin }
+    return returnObject
+  } else {
+    returnObject = { id: user.id }
+    return returnObject
+  }
 }
 
 const userService = {
   postSignUp: req => {
     const { name, email, password, passwordCheck } = req.body
-    console.log(email)
     checkErrorMistakeThrow.isExist(email, 'account&password be wrong')
     checkErrorMistakeThrow.isExist(password, 'account&password be wrong')
     checkErrorMistakeThrow.isSame(password, passwordCheck, 'account&password be wrong')
@@ -49,8 +62,9 @@ const userService = {
         return User.create({ name, email, password: hashPassword })
       })
       .then(data => {
-        delete data.password
-        return data
+        const userData = data.toJSON()
+        delete userData.password
+        return userData
       })
       .catch(err => { throw err })
   },
@@ -58,13 +72,14 @@ const userService = {
     const { email, password } = req.body
     checkErrorMistakeThrow.isExist(email, 'email & password have to be')
     checkErrorMistakeThrow.isExist(password, 'email & password have to be')
+    //  加入一個admin 兩個方式做promiseAll，或著做雙重確認，雙重確認np要抽象化程式
     return User.findOne({ where: { email } })
       .then(user => {
         const isSame = bcrypt.compareSync(password, user.password)
         if (user && isSame) {
           const userData = user.toJSON()
           delete userData.password
-          const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' })
+          const token = jwt.sign(jwtSignMessageObject(userData), process.env.JWT_SECRET, { expiresIn: '7d' })
           return { token, userData }
         } else throw new Error('email or password filled in incorrectly ')
       })

@@ -5,7 +5,7 @@ module.exports = {
     if (err instanceof Error) err.message = `${err.name} : ${err.message}`
     else err.message = `${err}`
 
-    res.status(err.status).json({
+    res.status(err.statusCode).json({
       status: err.status,
       message: err.message
     })

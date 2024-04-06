@@ -1,4 +1,4 @@
-const { User, Teacher } = require('../models')
+const { User, Teacher, Admin } = require('../models')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const checkErrorMistakeThrow = require('../helpers/checkError')
@@ -6,7 +6,7 @@ const { Sequelize } = require('sequelize')
 const condition = Sequelize.Op
 
 // eslint-disable-next-line space-before-function-paren
-function returnEmptyObjectOrWhereCondition(keyword, isTeacher) {
+function whereConditionOrReturnEmptyObject(keyword, isTeacher) {
   const whereCondition = {}
   if (keyword) {
     // eslint-disable-next-line no-const-assign
@@ -18,11 +18,10 @@ function returnEmptyObjectOrWhereCondition(keyword, isTeacher) {
   }
   return whereCondition
 }
-
 // eslint-disable-next-line space-before-function-paren
 async function withConditionUserFindAll(request) {
   if (!request) throw new Error(' request lost')
-  const DataMaxAmount = User.count({ where: { isTeacher: true } })
+  const DataMaxAmount = User.count()
   const dataNormalAmount = 10
   const indexFirstPosition = 0
   const { offset, limit, order, sequence, isTeacher, searchKeyWord } = request.query
@@ -31,7 +30,7 @@ async function withConditionUserFindAll(request) {
     limit: limit ? Number(limit) < DataMaxAmount ? Number(limit) : DataMaxAmount : dataNormalAmount,
     offset: offset || indexFirstPosition,
     order: order ? [[order, sequence || 'ASC']] : [],
-    where: returnEmptyObjectOrWhereCondition(searchKeyWord, isTeacher),
+    where: whereConditionOrReturnEmptyObject(searchKeyWord, isTeacher),
     include: isTeacher || searchKeyWord ? Teacher : [],
     nest: true,
     raw: true
@@ -41,10 +40,10 @@ async function withConditionUserFindAll(request) {
 function jwtSignMessageObject (user) {
   let returnObject = {}
   if (user.isAdmin) {
-    returnObject = { id: user.id, isAdmin: user.isAdmin }
+    returnObject = { id: user.id, email: user.email, isAdmin: user.isAdmin }
     return returnObject
   } else {
-    returnObject = { id: user.id }
+    returnObject = { id: user.id, email: user.email }
     return returnObject
   }
 }
@@ -72,17 +71,19 @@ const userService = {
     const { email, password } = req.body
     checkErrorMistakeThrow.isExist(email, 'email & password have to be')
     checkErrorMistakeThrow.isExist(password, 'email & password have to be')
-    //  加入一個admin 兩個方式做promiseAll，或著做雙重確認，雙重確認np要抽象化程式
-    return User.findOne({ where: { email } })
-      .then(user => {
-        const isSame = bcrypt.compareSync(password, user.password)
-        if (user && isSame) {
-          const userData = user.toJSON()
-          delete userData.password
-          const token = jwt.sign(jwtSignMessageObject(userData), process.env.JWT_SECRET, { expiresIn: '7d' })
-          return { token, userData }
-        } else throw new Error('email or password filled in incorrectly ')
-      })
+    return Promise.allSettled([
+      User.findOne({ where: { email }, raw: true }),
+      Admin.findOne({ where: { email }, raw: true })
+    ]).then(results => {
+      return results.find(result => result.value !== null).value
+    }).then(user => {
+      const isSame = bcrypt.compareSync(password, user.password)
+      if (user && isSame) {
+        delete user.password
+        const token = jwt.sign(jwtSignMessageObject(user), process.env.JWT_SECRET, { expiresIn: '7d' })
+        return { token, user }
+      } else throw new Error('email or password filled in incorrectly ')
+    })
       .catch(err => { throw err })
   },
   getUsers: req => {

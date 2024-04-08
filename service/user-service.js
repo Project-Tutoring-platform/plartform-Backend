@@ -1,7 +1,7 @@
 const { User, Teacher, Admin } = require('../models')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const checkErrorMistakeThrow = require('../helpers/checkError')
+const checkItems = require('../helpers/checkError')
 const { Sequelize } = require('sequelize')
 const condition = Sequelize.Op
 
@@ -21,7 +21,7 @@ function whereConditionOrReturnEmptyObject(keyword, isTeacher) {
 // eslint-disable-next-line space-before-function-paren
 async function withConditionUserFindAll(request) {
   if (!request) throw new Error(' request lost')
-  const DataMaxAmount = User.count()
+  const DataMaxAmount = await User.count()
   const dataNormalAmount = 10
   const indexFirstPosition = 0
   const { offset, limit, order, sequence, isTeacher, searchKeyWord } = request.query
@@ -51,9 +51,9 @@ function jwtSignMessageObject (user) {
 const userService = {
   postSignUp: req => {
     const { name, email, password, passwordCheck } = req.body
-    checkErrorMistakeThrow.isExist(email, 'account&password be wrong')
-    checkErrorMistakeThrow.isExist(password, 'account&password be wrong')
-    checkErrorMistakeThrow.isSame(password, passwordCheck, 'account&password be wrong')
+    checkItems.isExist(email, 'account&password be wrong')
+    checkItems.isExist(password, 'account&password be wrong')
+    checkItems.isSame(password, passwordCheck, 'account&password be wrong')
     return User.count({ where: { email } })
       .then(isMoreOne => {
         if (isMoreOne > 0) throw new Error('email have be exist')
@@ -69,12 +69,13 @@ const userService = {
   },
   postSignin: req => {
     const { email, password } = req.body
-    checkErrorMistakeThrow.isExist(email, 'email & password have to be')
-    checkErrorMistakeThrow.isExist(password, 'email & password have to be')
+    checkItems.isExist(email, 'email & password have to be')
+    checkItems.isExist(password, 'email & password have to be')
     return Promise.allSettled([
       User.findOne({ where: { email }, raw: true }),
       Admin.findOne({ where: { email }, raw: true })
     ]).then(results => {
+      console.log(results)
       return results.find(result => result.value !== null).value
     }).then(user => {
       const isSame = bcrypt.compareSync(password, user.password)
@@ -95,8 +96,8 @@ const userService = {
     const { teachingStyle, introduced, link, coursePeriod } = req.body
     return User.findByPk(req.user.id)
       .then(user => {
-        checkErrorMistakeThrow.isExist(user, 'user to be exist')
-        checkErrorMistakeThrow.isSame(user.isTeacher, false, 'Already is a teacher')
+        checkItems.isExist(user, 'user to be exist')
+        checkItems.isSame(user.isTeacher, false, 'Already is a teacher')
         user.update({ isTeacher: true, introduced })
         Teacher.create({ userId: user.id, teachingStyle, link, coursePeriod })
       }).then(() => {

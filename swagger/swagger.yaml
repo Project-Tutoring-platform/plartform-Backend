@@ -1,0 +1,53 @@
+swagger: "2.0"
+info:
+  title: "API Documentation"
+  version: "1.0"
+basePath: "/"
+tags:
+  - name: basic
+    description: operation about sign
+  - name: user
+    description: operation about user
+paths:
+  /signup:
+    post:
+      tags:
+        - basic
+      summary: "Sign Up"
+      description: This is only be done by the sign up in user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/signup'
+      responses:
+        default:
+          description: Successful operation
+          content:
+            application/json:
+              $ref: '#/components/schemas/signup'
+components:
+  schemas:
+    signup:
+      type: object
+      properties:
+        name:
+          type: string
+          example: jon
+        email:
+          type: string
+          example: user1@example.com
+        password:
+          type: string
+          example: 12345678
+        passwordCheck:
+          type: string
+          example: 12345678
+  requestBodies:
+    UserArray:
+      description: List of user object
+      content:
+        application/json:
+          schema:
+            type: array
+            items: $ref '#/components/schemas/signup'

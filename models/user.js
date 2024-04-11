@@ -24,8 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     leaningHours: DataTypes.INTEGER,
     isTeacher: DataTypes.BOOLEAN,
     avatar: DataTypes.STRING
-  },
-  {
+  }, {
     sequelize,
     modelName: 'User',
     tableName: 'Users',

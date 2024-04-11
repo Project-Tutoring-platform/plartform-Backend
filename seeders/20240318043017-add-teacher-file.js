@@ -7,7 +7,6 @@ const Teachers = User.findAll({ where: { isTeacher: true }, raw: true })
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await console.log(Teachers)
     await queryInterface.bulkInsert('Teachers',
       Array.from(await Teachers, teacher => ({
         teaching_style: faker.lorem.text(),

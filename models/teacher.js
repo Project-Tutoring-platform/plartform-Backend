@@ -13,14 +13,19 @@ module.exports = (sequelize, DataTypes) => {
       Teacher.belongsTo(models.User, {
         foreignKey: 'userId'
       })
+      Teacher.hasMany(models.Course, {
+        foreignKey: 'teachId'
+      })
     }
   }
   Teacher.init({
     teachingStyle: DataTypes.TEXT,
-    review: DataTypes.INTEGER,
+    pointTotal: DataTypes.INTEGER,
     reviewTimes: DataTypes.INTEGER,
     userId: DataTypes.INTEGER,
-    courseLink: DataTypes.STRING
+    courseLink: DataTypes.STRING,
+    coursePeriod: DataTypes.STRING,
+    weekSelect: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Teacher',

@@ -6,17 +6,12 @@ const Sequelize = require('sequelize')
 const process = require('process')
 const basename = path.basename(__filename)
 const env = process.env.NODE_ENV || 'development'
-const config = require(__dirname + '/../config/config.js')[env]
+// eslint-disable-next-line n/no-path-concat
+const config = require(__dirname + '/../config/config.json')[env]
 const db = {}
-const connect = require('../helpers/connect')
 
 let sequelize
-// const cloudConfig = {
-//   instanceConnectionName: process.env.INSTANCE_CONNECT_NAME,
-//   username: process.env.DB_USER,
-//   databaseName: process.env.DB_NAME
-// }
-// connect(cloudConfig)
+
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config)
 } else {

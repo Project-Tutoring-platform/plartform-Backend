@@ -1,31 +1,40 @@
 'use strict'
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('Teachers', {
+    await queryInterface.createTable('Courses', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      teaching_style: {
-        type: Sequelize.TEXT
-      },
-      point_total: {
+      week: {
         type: Sequelize.INTEGER
       },
-      review_times: {
-        type: Sequelize.INTEGER
+      date: {
+        type: Sequelize.DATEONLY
       },
-      user_id: {
+      is_finish: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      is_reserve: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      period_id: {
         type: Sequelize.INTEGER,
-        Unique: true,
         allowNull: false
       },
-      course_link: {
-        type: Sequelize.STRING
+      teach_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      user_id: {
+        type: Sequelize.INTEGER
       },
       created_at: {
         allowNull: false,
@@ -38,6 +47,6 @@ module.exports = {
     })
   },
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Teachers')
+    await queryInterface.dropTable('Courses')
   }
 }

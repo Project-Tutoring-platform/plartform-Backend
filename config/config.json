@@ -1,0 +1,12 @@
+{
+  "production": {
+    "use_env_variable": "DATABASE_URL"
+  },
+  "development": {
+    "username": "root",
+    "password": "password",
+    "host": "127.0.0.1",
+    "database": "platform",
+    "dialect": "mysql"
+  }
+}

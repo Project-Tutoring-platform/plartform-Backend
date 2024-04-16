@@ -1,31 +1,28 @@
 'use strict'
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('Teachers', {
+    await queryInterface.createTable('Admins', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      teaching_style: {
-        type: Sequelize.TEXT
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
       },
-      point_total: {
-        type: Sequelize.INTEGER
+      password: {
+        type: Sequelize.STRING,
+        allowNull: true
       },
-      review_times: {
-        type: Sequelize.INTEGER
-      },
-      user_id: {
-        type: Sequelize.INTEGER,
-        Unique: true,
-        allowNull: false
-      },
-      course_link: {
+      name: {
         type: Sequelize.STRING
+      },
+      is_admin: {
+        type: Sequelize.BOOLEAN
       },
       created_at: {
         allowNull: false,
@@ -38,6 +35,6 @@ module.exports = {
     })
   },
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Teachers')
+    await queryInterface.dropTable('Admins')
   }
 }

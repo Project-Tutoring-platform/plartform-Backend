@@ -8,7 +8,7 @@ const Teachers = User.findAll({ where: { isTeacher: true }, raw: true })
 module.exports = {
   async up (queryInterface, Sequelize) {
     await queryInterface.bulkInsert('Teachers',
-      Array.from(await Teachers, (teacher) => ({
+      Array.from(await Teachers, teacher => ({
         teaching_style: faker.lorem.text(),
         course_link: faker.internet.url(),
         user_id: teacher.id,

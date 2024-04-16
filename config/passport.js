@@ -5,7 +5,7 @@ const GoogleStrategy = require('passport-google-oauth2').Strategy
 
 const JwtStrategy = passportJwt.Strategy
 const ExtractJwt = passportJwt.ExtractJwt
-const { User } = require('../models')
+const { User, Admin } = require('../models')
 
 const jwtOption = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -13,7 +13,12 @@ const jwtOption = {
 }
 
 passport.use(new JwtStrategy(jwtOption, (jwtPayload, done) => {
-  User.findByPk(jwtPayload.id, { attributes: { exclude: ['password'] } })
+  Promise.allSettled([
+    User.findOne({ where: { email: jwtPayload.email }, attributes: { exclude: ['password'] }, raw: true }),
+    Admin.findOne({ where: { email: jwtPayload.email }, attributes: { exclude: ['password'] }, raw: true })
+  ]).then(results => {
+    return results.find(result => result.value !== null).value
+  })
     .then(user => done(null, user))
     .catch(err => done(err))
 }))

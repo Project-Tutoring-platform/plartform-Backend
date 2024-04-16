@@ -75,7 +75,6 @@ const userService = {
       User.findOne({ where: { email }, raw: true }),
       Admin.findOne({ where: { email }, raw: true })
     ]).then(results => {
-      console.log(results)
       return results.find(result => result.value !== null).value
     }).then(user => {
       const isSame = bcrypt.compareSync(password, user.password)

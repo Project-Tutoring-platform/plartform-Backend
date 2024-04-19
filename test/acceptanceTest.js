@@ -240,4 +240,17 @@ describe('驗收測試', function () {
 
     })
   })
+  describe('預約課程',function(){
+    const token = jwt.sign({ email: 'user1@example.com' }, process.env.JWT_SECRET, { expiresIn: '7d' })
+    afterEach(function () {
+      sinon.restore()
+    })
+    it('預約課程成功', async function(){
+      // put /course/:id
+      //控制假資料修改成功，送出紀錄的資料
+      
+      const  response = await request(app).PUT('/course').auth(token, {type: "bearer"})
+      assert.equal(respose.body.date[0].isReverse, true)
+    })
+  })
 })

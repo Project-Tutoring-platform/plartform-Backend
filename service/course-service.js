@@ -1,19 +1,13 @@
 const { Course, Teacher, CoursePeriod } = require('../models')
-const cron = require('node-cron')
 const dayjs = require('dayjs')
 
-cron.schedule('30 * * * *', () => {
-  batchGetTeacherData()
-}, {
-  scheduled: true,
-  timezone: 'Asia/Taipei'
-})
-
+// 撈全部老師資料
 async function batchGetTeacherData () {
   Teacher.findAll({
     nest: true,
     include: [{ model: Course, include: CoursePeriod, where: { isReserve: false } }]
   }).then(teachers => {
+    // 開始批次
     for (const teacher of teachers) {
       const teacherJson = teacher.toJSON()
       checkAddDeleteProcess(teacherJson).then(needUpdate => {
@@ -24,12 +18,13 @@ async function batchGetTeacherData () {
     }
   }).catch(error => { throw error })
 }
+// 檢查,新增,刪除程序
 async function checkAddDeleteProcess (teacher) {
   // 原先資料庫的課程日期
   const originCourseDateList = originCourseDate(teacher)
   // 得到下兩週老師的想要的課程日期
   const expectedCourseDateList = expectedNextTwoWeekDateList(teacher)
-  // 找出缺失的預期課程要增加或者使用預期資料
+  // 找出缺失的預期日期來增加或者使用預期資料
   const datesToAdd = originCourseDateList ? expectedCourseDateList.filter(date => !originCourseDateList.includes(date)) : expectedCourseDateList
   // 找出多餘的原先課程要刪除
   const datesToDelete = originCourseDateList.filter(date => {
@@ -85,7 +80,7 @@ async function creteCoursePromise (teacher, dateArray) {
   })
   return createPromises
 }
-
+// 根據 日期陣列和條件 來刪除課程
 function deleteCoursePromise (dateArray) {
   const deletePromise = dateArray.map(date => {
     return Course.destroy({ where: { date, isReserve: false } })
@@ -97,4 +92,4 @@ const courseService = {
   // 預約課程
 }
 
-module.exports = courseService
+module.exports = { courseService, batchGetTeacherData }

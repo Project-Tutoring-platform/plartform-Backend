@@ -3,6 +3,8 @@ const app = require('../app')
 const assert = require('assert')
 const userController = require('../controllers/user-controller')
 const signController = require('../controllers/sign-controller')
+const courseController = require('../controllers/course-controller')
+const {courseService} = require('../service/course-service')
 const userService = require('../service/user-service')
 const sinon = require('sinon')
 const jwt = require('jsonwebtoken')
@@ -193,11 +195,11 @@ describe('驗收測試', function () {
     })
   })
   describe('管理者測試', function () {
-    const token = jwt.sign({id:1, email: 'root@example.com',isAdmin:1 }, process.env.JWT_SECRET, { expiresIn: '7d' })
+    const token = jwt.sign({ id: 1, email: 'root@example.com', isAdmin: 1 }, process.env.JWT_SECRET, { expiresIn: '7d' })
     const watchSignController = sinon.spy(signController, 'postSignin')
     const watchUserController = sinon.spy(userController, 'getUsers')
     const watchAuthenticated = sinon.spy(authenticated)
-    beforeEach(function(){
+    beforeEach(function () {
       sinon.spy(adminAuthenticated)
     })
     afterEach(function () {
@@ -238,6 +240,31 @@ describe('驗收測試', function () {
 
       assert.equal(response.body.data[0].email, 'root@example.com')
 
+    })
+  })
+  describe('預約課程', function () {
+    const token = jwt.sign({ email: 'user1@example.com' }, process.env.JWT_SECRET, { expiresIn: '7d' })
+    const sandbox = sinon.createSandbox()
+    beforeEach(function(){
+      sandbox.spy()
+    })
+    afterEach(function () {
+      sandbox.restore()
+    })
+    it('預約課程成功', async function () {
+      let spyCourseController = await sandbox.spy(courseController, 'reverseCourse')
+      const stubCourseService = await sandbox.stub(courseService,'reverseCourse')
+      console.dir(spyCourseController.args)
+      //控制假資料修改成功，送出紀錄的資料
+      stubCourseService.resolves({
+      id:1,
+      teacherId:30,
+      userId:2,
+      isReserve:1,
+      isFinish: false,
+      })
+      const response = await request(app).put('/course/1/reverse').auth(token, { type: "bearer" })
+      assert.equal(response.body.data.isReserve, true)
     })
   })
 })

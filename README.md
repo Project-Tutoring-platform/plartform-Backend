@@ -14,6 +14,11 @@
 |PUT| /course/:courseId/reverse| reverse a course
 |PUT| /review/:reviewId | update a review
 
+## test data
+
+1. email: user1@example.com , password: 12345678
+2. email: user2@eample.com, password: 12345678
+
 # 實現的想法
  1. 用ATDD的概念去寫code
  2. 根據需求嘗試排程套件還有相關sequelize hook 

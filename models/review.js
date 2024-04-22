@@ -1,19 +1,19 @@
-'use strict';
+'use strict'
 const {
   Model
-} = require('sequelize');
+} = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
-  class review extends Model {
+  class Review extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
+    static associate (models) {
       // define association here
     }
   }
-  review.init({
+  Review.init({
     text: DataTypes.TEXT,
     point: DataTypes.INTEGER,
     isReview: DataTypes.BOOLEAN,
@@ -22,7 +22,9 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'review',
-  });
-  return review;
-};
+    modelName: 'Review',
+    tableName: 'Reviews',
+    underscored: true
+  })
+  return Review
+}

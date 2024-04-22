@@ -1,8 +1,8 @@
-'use strict';
+'use strict'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('reviews', {
+  async up (queryInterface, Sequelize) {
+    await queryInterface.createTable('Reviews', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -15,29 +15,33 @@ module.exports = {
       point: {
         type: Sequelize.INTEGER
       },
-      isReview: {
-        type: Sequelize.BOOLEAN
+      is_review: {
+        type: Sequelize.BOOLEAN,
+        default: false
       },
-      courseId: {
-        type: Sequelize.INTEGER
+      course_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
-      teacherId: {
-        type: Sequelize.INTEGER
+      teacher_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
-      userId: {
-        type: Sequelize.INTEGER
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    })
   },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('reviews');
+  async down (queryInterface, Sequelize) {
+    await queryInterface.dropTable('Reviews')
   }
-};
+}
